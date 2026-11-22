@@ -1,0 +1,23 @@
+# macOS
+.DS_Store
+
+# Build output
+build/
+
+# In-source CMake runs
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+
+# clangd
+.cache/
+compile_commands.json
+
+# Editors
+.vscode/
+.idea/
+*.swp
+
+# Release artifacts
+*.zip
+*.dmg

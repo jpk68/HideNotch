@@ -1,7 +1,6 @@
 #import "AppDelegate.h"
 #import "LockScreen.h"
 #import <QuartzCore/QuartzCore.h>
-#include <vector>
 
 // Radius of the rounded corners drawn below the bar
 static const CGFloat kCornerRadius = 15.0;
@@ -32,7 +31,7 @@ static CGPathRef CreateOverlayPath(CGSize size, CGFloat radius)
 }
 
 @interface AppDelegate () {
-    std::vector<NSWindow*> m_overlayWindows;
+    NSArray<NSWindow*>* m_overlayWindows;
     BOOL m_screenLocked;
 }
 @property (strong, nonatomic) NSStatusItem* statusItem;
@@ -140,11 +139,7 @@ static CGPathRef CreateOverlayPath(CGSize size, CGFloat radius)
         return;
     }
 
-    NSMutableArray<NSWindow*>* windows = [NSMutableArray array];
-    for (NSWindow* win : m_overlayWindows) {
-        [windows addObject:win];
-    }
-    MoveWindowsAboveLockScreen(windows);
+    MoveWindowsAboveLockScreen(m_overlayWindows);
 }
 
 - (void)setupOverlays
@@ -158,7 +153,7 @@ static CGPathRef CreateOverlayPath(CGSize size, CGFloat radius)
     [CATransaction begin];
     [CATransaction setDisableActions:!animate];
 
-    std::vector<NSWindow*> newWindows;
+    NSMutableArray<NSWindow*>* newWindows = [NSMutableArray array];
 
     for (NSScreen* screen in [NSScreen screens]) {
         // Only apply to screens with a notch
@@ -215,13 +210,13 @@ static CGPathRef CreateOverlayPath(CGSize size, CGFloat radius)
         window.collectionBehavior = NSWindowCollectionBehaviorCanJoinAllSpaces | NSWindowCollectionBehaviorStationary | NSWindowCollectionBehaviorIgnoresCycle;
 
         [window orderFrontRegardless];
-        newWindows.push_back(window);
+        [newWindows addObject:window];
     }
 
-    for (NSWindow* win : m_overlayWindows) {
+    for (NSWindow* win in m_overlayWindows) {
         [win close];
     }
-    m_overlayWindows = std::move(newWindows);
+    m_overlayWindows = [newWindows copy];
 
     [CATransaction commit];
 

@@ -146,6 +146,8 @@ static CGPathRef CreateOverlayPath(CGSize size, CGFloat radius)
 {
     CGFloat cornerRadius = [self optionEnabled:kRoundedCornersKey] ? kCornerRadius : 0;
     BOOL animate = [self optionEnabled:kAnimateTransitionsKey];
+    // Fade in/out like a normal window, or appear and disappear instantly
+    NSWindowAnimationBehavior animationBehavior = animate ? NSWindowAnimationBehaviorDefault : NSWindowAnimationBehaviorNone;
 
     // Unless animating, swap overlays as an instant cut with no implicit layer
     // animations. The new windows go up before the old ones come down either
@@ -180,8 +182,7 @@ static CGPathRef CreateOverlayPath(CGSize size, CGFloat radius)
         // ARC owns the window via m_overlayWindows; don't let -close release it too
         window.releasedWhenClosed = NO;
 
-        // Fade in/out like a normal window, or appear and disappear instantly
-        window.animationBehavior = animate ? NSWindowAnimationBehaviorDefault : NSWindowAnimationBehaviorNone;
+        window.animationBehavior = animationBehavior;
 
         // Transparent window; the shape layer draws the black bar and corners
         window.backgroundColor = [NSColor clearColor];
@@ -214,6 +215,8 @@ static CGPathRef CreateOverlayPath(CGSize size, CGFloat radius)
     }
 
     for (NSWindow* win in m_overlayWindows) {
+        // Use the current setting, not the one from when the window was created
+        win.animationBehavior = animationBehavior;
         [win close];
     }
     m_overlayWindows = [newWindows copy];

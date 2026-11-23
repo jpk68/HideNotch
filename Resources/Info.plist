@@ -4,6 +4,10 @@
 <dict>
     <key>CFBundleExecutable</key>
     <string>HideNotch</string>
+    <key>CFBundleIconFile</key>
+    <string>HideNotch</string>
+    <key>CFBundleIconName</key>
+    <string>HideNotch</string>
     <key>CFBundleIdentifier</key>
     <string>io.github.jpk68.HideNotch</string>
     <key>CFBundleName</key>
